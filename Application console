@@ -1,0 +1,49 @@
+#include <CkRss.h>
+using namespace std;
+void rssexemple(void)
+    {
+    CkRss rss;
+
+    // telecharger URL 
+    bool success = rss.DownloadRss("http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml");
+    if (success != true) {
+        cout << rss.lastErrorText() << "\r\n";
+        return;
+    }
+
+    //  la premiere chanel.
+    CkRss *rssChannel = rss.GetChanel(0);
+    if (rss.get_LastMethodSuccess() == false) {
+        cout << "aucun chanel est trouve." << "\r\n";
+        return;
+    }
+
+    //  information sur channel:
+    cout << "Titre " << rssChannel->getString("titre") << "\r\n";
+    cout << "Lien: " << rssChannel->getString("lien") << "\r\n";
+    cout << "Description: " << rssChannel->getS…
+    int numItems = rssChannel->get_NumItems();
+    int i;
+
+    for (i = 0; i <= numItems - 1; i++) {
+        CkRss *rssItem = rssChannel->GetItem(i);
+
+        cout << "----" << "\r\n";
+        cout << "Titre: " << rssItem->getString("titre") << "\r\n";
+        cout << "Lien: " << rssItem->getString("lien") << "\r\n";
+        cout << "pubDate: " << rssItem->getString("pubDate") << "\r\n";
+
+        int numCategories = rssItem->GetCount("categorie");
+        int j;
+        if (numCategories > 0) {
+            for (j = 0; j <= numCategories - 1; j++) {
+                cout << "    categorie: " << rssItem->mGetString("categorie",j) << "\r\n";
+            }
+
+        }
+
+        delete rssItem;
+    }
+
+    delete rssChannel;
+   }
